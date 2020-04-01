@@ -1,10 +1,8 @@
-package pt.ulisboa.tecnico.learnjava.sibs.domain;
+package statedesignpattern;
 
 import pt.ulisboa.tecnico.learnjava.bank.exceptions.AccountException;
 import pt.ulisboa.tecnico.learnjava.bank.services.Services;
 import pt.ulisboa.tecnico.learnjava.sibs.exceptions.OperationException;
-import statedesignpattern.Registered;
-import statedesignpattern.TransferOperationState;
 
 public class Context {
 
