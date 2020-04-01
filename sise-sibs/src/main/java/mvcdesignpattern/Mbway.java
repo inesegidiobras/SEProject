@@ -156,23 +156,32 @@ public class Mbway {
 		return totalAmount;
 	}
 
+	public void clearArraysPhoneAndAmount() throws AccountException {
+		this.MbwaySplitAmounts.clear();
+		this.MbwaySplitPhoneNumbers.clear();
+
+	}
+
+	public void refundMbwayClientsSplitted() throws AccountException {
+
+		for (int i = 1; i < this.MbwaySplitPhoneNumbers.size(); i++) {
+			this.services.deposit(this.MbwayClients.get(this.MbwaySplitPhoneNumbers.get(i)).getIban(),
+					this.MbwaySplitAmounts.get(i));
+			this.services.deposit(this.MbwayClients.get(this.MbwaySplitPhoneNumbers.get(0)).getIban(), amount);
+			this.services.withdraw(this.MbwayClients.get(this.MbwaySplitPhoneNumbers.get(0)).getIban(),
+					this.MbwaySplitAmounts.get(i));
+		}
+	}
+
 	public Integer splitBillMbway(int numberOfFriends, int amount) throws AccountException {
 
 		int totalAmount = splitBillCheckAmount(numberOfFriends, amount);
 		if (totalAmount == amount) {
-			this.MbwaySplitAmounts.clear();
-			this.MbwaySplitPhoneNumbers.clear();
+			clearArraysPhoneAndAmount();
 			return totalAmount;
 		} else {
-			for (int i = 1; i < this.MbwaySplitPhoneNumbers.size(); i++) {
-				this.services.deposit(this.MbwayClients.get(this.MbwaySplitPhoneNumbers.get(i)).getIban(),
-						this.MbwaySplitAmounts.get(i));
-				this.services.deposit(this.MbwayClients.get(this.MbwaySplitPhoneNumbers.get(0)).getIban(), amount);
-				this.services.withdraw(this.MbwayClients.get(this.MbwaySplitPhoneNumbers.get(0)).getIban(),
-						this.MbwaySplitAmounts.get(i));
-			}
-			this.MbwaySplitAmounts.clear();
-			this.MbwaySplitPhoneNumbers.clear();
+			refundMbwayClientsSplitted();
+			clearArraysPhoneAndAmount();
 			throw new AccountException();
 		}
 	}
