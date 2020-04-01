@@ -21,8 +21,8 @@ public class Client {
 
 	public Client(Bank bank, String firstName, String lastName, String nif, String phoneNumber, String address, int age)
 			throws ClientException {
-		checkParameters(bank, nif, phoneNumber, age);
-
+		checkParameters(phoneNumber, age);
+		checkNif(bank, nif);
 		this.bank = bank;
 		this.firstName = firstName;
 		this.lastName = lastName;
@@ -34,19 +34,20 @@ public class Client {
 		bank.addClient(this);
 	}
 
-	private void checkParameters(Bank bank, String nif, String phoneNumber, int age) throws ClientException {
+	private void checkParameters(String phoneNumber, int age) throws ClientException {
 		if (age < 0) {
-			throw new ClientException();
-		}
-
-		if (nif.length() != 9 || !nif.matches("[0-9]+")) {
 			throw new ClientException();
 		}
 
 		if (phoneNumber.length() != 9 || !phoneNumber.matches("[0-9]+")) {
 			throw new ClientException();
 		}
+	}
 
+	private void checkNif(Bank bank, String nif) throws ClientException {
+		if (nif.length() != 9 || !nif.matches("[0-9]+")) {
+			throw new ClientException();
+		}
 		if (bank.getClientByNif(nif) != null) {
 			throw new ClientException();
 		}
