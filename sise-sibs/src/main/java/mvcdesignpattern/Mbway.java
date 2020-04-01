@@ -146,13 +146,19 @@ public class Mbway {
 		}
 	}
 
-	public Integer splitBillMbway(int numberOfFriends, int amount) throws AccountException {
+	public Integer splitBillCheckAmount(int numberOfFriends, int amount) throws AccountException {
 
 		Integer totalAmount = 0;
 		for (int i = this.MbwaySplitAmounts.size() - 1; i <= numberOfFriends && i >= 0; i--) {
 			Integer amountSplit = this.MbwaySplitAmounts.get(i);
 			totalAmount += amountSplit;
 		}
+		return totalAmount;
+	}
+
+	public Integer splitBillMbway(int numberOfFriends, int amount) throws AccountException {
+
+		int totalAmount = splitBillCheckAmount(numberOfFriends, amount);
 		if (totalAmount == amount) {
 			this.MbwaySplitAmounts.clear();
 			this.MbwaySplitPhoneNumbers.clear();
