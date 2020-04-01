@@ -20,6 +20,7 @@ import pt.ulisboa.tecnico.learnjava.sibs.exceptions.OperationException;
 import pt.ulisboa.tecnico.learnjava.sibs.exceptions.SibsException;
 import statedesignpattern.Cancelled;
 import statedesignpattern.Deposited;
+import statedesignpattern.Error;
 import statedesignpattern.Processed;
 import statedesignpattern.Registered;
 import statedesignpattern.Retry;
@@ -185,15 +186,23 @@ public class TransferOperationMethodTest {
 	}
 
 	@Test
-	public void errorTransferOperation() throws OperationException, SibsException, AccountException {
+	public void retryErrorStateTest() throws OperationException, SibsException, AccountException {
 		Services services = new Services();
 		this.sibs = new Sibs(100, services);
 
 		TransferOperation transferOperation = new TransferOperation(this.sourceIbanError, this.targetIban, 100);
 		transferOperation.process(services);
-		transferOperation.process(services);
+		assertTrue(transferOperation.getStateContext().getCurrentState() instanceof Retry);
 		transferOperation.process(services);
 		assertTrue(transferOperation.getStateContext().getCurrentState() instanceof Retry);
+		transferOperation.process(services);
+		assertTrue(transferOperation.getStateContext().getCurrentState() instanceof Retry);
+		transferOperation.process(services);
+		assertTrue(transferOperation.getStateContext().getCurrentState() instanceof Error);
+		// It is not possible to cancel Error State Operations, the state should
+		// remain the same
+		transferOperation.cancel();
+		assertTrue(transferOperation.getStateContext().getCurrentState() instanceof Error);
 		assertEquals(0, services.getAccountByIban(this.sourceIbanError).getBalance());
 		assertEquals(1000, services.getAccountByIban(this.targetIban).getBalance());
 	}

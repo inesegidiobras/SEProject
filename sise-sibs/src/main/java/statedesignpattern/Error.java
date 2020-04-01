@@ -7,13 +7,13 @@ public class Error implements TransferOperationState {
 
 	@Override
 	public void process(Context state) throws AccountException, OperationException {
-		state.setState(new Error());
+		state.setState(this);
 
 	}
 
 	@Override
 	public void cancel(Context state) throws OperationException, AccountException {
-		// TODO Auto-generated method stub
+		state.setState(this);
 
 	}
 

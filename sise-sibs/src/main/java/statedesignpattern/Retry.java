@@ -7,17 +7,18 @@ import pt.ulisboa.tecnico.learnjava.sibs.exceptions.OperationException;
 public class Retry implements TransferOperationState {
 
 	private int count = 3;
-	public TransferOperationState previousState;
+	public TransferOperationState stateBeforeRetry;
 	Services services;
 
-	public Retry(TransferOperationState previousState) {
-		this.previousState = previousState;
+	public Retry(TransferOperationState stateBeforeRetry) {
+		this.stateBeforeRetry = stateBeforeRetry;
 	}
 
 	@Override
 	public void process(Context state) throws AccountException, OperationException {
+
 		try {
-			state.setState(this.previousState);
+			state.setState(this.stateBeforeRetry);
 			state.process(state.getServices());
 		} catch (AccountException e) {
 			this.count--;
@@ -26,13 +27,12 @@ public class Retry implements TransferOperationState {
 		if (this.count == 0) {
 			this.cancel(state);
 			state.setState(new Error());
-
 		}
 	}
 
 	@Override
 	public void cancel(Context state) throws OperationException, AccountException {
-		state.setState(this.previousState);
+		state.setState(this.stateBeforeRetry);
 		state.cancel();
 	}
 }

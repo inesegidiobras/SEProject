@@ -5,6 +5,7 @@ import pt.ulisboa.tecnico.learnjava.bank.services.Services;
 import pt.ulisboa.tecnico.learnjava.sibs.exceptions.OperationException;
 import pt.ulisboa.tecnico.learnjava.sibs.exceptions.SibsException;
 import statedesignpattern.Cancelled;
+import statedesignpattern.Error;
 import statedesignpattern.Processed;
 import statedesignpattern.Retry;
 
@@ -27,16 +28,17 @@ public class Sibs {
 	}
 
 	public void processOperations() throws OperationException, AccountException, SibsException {
+		TransferOperation transfer = null;
 		for (int i = 0; i < this.operations.length; i++) {
 			Operation operation = this.operations[i];
 			if (operation != null && operation.getType().equals(Operation.OPERATION_TRANSFER)) {
-				TransferOperation transfer = (TransferOperation) this.operations[i];
+				transfer = (TransferOperation) this.operations[i];
 				while (!(transfer.getStateContext().getCurrentState() instanceof Processed)
 						&& (!(transfer.getStateContext().getCurrentState() instanceof Error))
 						&& (!(transfer.getStateContext().getCurrentState() instanceof Cancelled))) {
 					try {
 						transfer.process(this.services);
-					} catch (OperationException e) {
+					} catch (OperationException | AccountException e) {
 						if (transfer.getStateContext().getCurrentState() instanceof Retry) {
 							transfer.process(this.services);
 						} else {
@@ -46,6 +48,7 @@ public class Sibs {
 				}
 			}
 		}
+		transfer.getStateContext().getCurrentState();
 	}
 
 	public void cancelOperation(int id) throws OperationException, AccountException, SibsException {
