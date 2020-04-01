@@ -36,18 +36,12 @@ public class MbwayMVCPattern {
 
 		Client clientOne = new Client(cgd, "Ana", "Íris", "333333333", "918318903", "Street", 29);
 		Client clientTwo = new Client(cgd, "Inês", "Brás", "444444444", "966209505", "Street", 24);
-		Client clientThree = new Client(cgd, "Rui", "Alves", "555555555", "917654321", "Street", 24);
-		Client clientFour = new Client(cgd, "Teresa", "Alves", "666666666", "917654321", "Street", 24);
 
 		cgd.createAccount(AccountType.CHECKING, clientOne, 500, 0);
 		cgd.createAccount(AccountType.CHECKING, clientTwo, 1000, 0);
-		cgd.createAccount(AccountType.CHECKING, clientThree, 100, 0);
-		cgd.createAccount(AccountType.CHECKING, clientFour, 100, 0);
 
 		System.out.println(cgd.createAccount(AccountType.CHECKING, clientOne, 500, 0));
 		System.out.println(cgd.createAccount(AccountType.CHECKING, clientTwo, 1000, 0));
-		System.out.println(cgd.createAccount(AccountType.CHECKING, clientThree, 100, 0));
-		System.out.println(cgd.createAccount(AccountType.CHECKING, clientFour, 100, 0));
 
 		while (true) {
 
@@ -82,7 +76,7 @@ public class MbwayMVCPattern {
 				MbwayFriendsPhoneNumber.add(userPhoneNumber);
 				ArrayList<Integer> amountSplitList = new ArrayList<>();
 				amountSplitList.add(userAmountSplit);
-				System.out.println(services.getAccountByIban("CGDCK5").getBalance());
+//				System.out.println(services.getAccountByIban("CGDCK5").getBalance());
 				while (!view.inputFriend().equals("End")) {
 					String friendPhoneNumber = view.inputFriendPhoneNumber();
 					Integer amountSplit = view.inputSplittedAmount();
@@ -97,12 +91,12 @@ public class MbwayMVCPattern {
 					controller.setUserPaymentBill(userPhoneNumber, userAmountSplit, amount);
 					for (int i = 1; i < MbwayFriendsPhoneNumber.size(); i++) {
 						controller.setFriendPaymentBill(MbwayFriendsPhoneNumber.get(i), amountSplitList.get(i));
-						System.out.println(services.getAccountByIban("CGDCK6").getBalance());
-						System.out.println(services.getAccountByIban("CGDCK7").getBalance());
+//						System.out.println(services.getAccountByIban("CGDCK6").getBalance());
+//						System.out.println(services.getAccountByIban("CGDCK7").getBalance());
 					}
 					controller.setSplitBillMbway(numberOfFriends, amount);
-					System.out.println(services.getAccountByIban("CGDCK5").getBalance());
-					System.out.println(services.getAccountByIban("CGDCK6").getBalance());
+//					System.out.println(services.getAccountByIban("CGDCK5").getBalance());
+//					System.out.println(services.getAccountByIban("CGDCK6").getBalance());
 				}
 				MbwayFriendsPhoneNumber.clear();
 				amountSplitList.clear();
