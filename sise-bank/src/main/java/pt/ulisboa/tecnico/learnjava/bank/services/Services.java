@@ -21,10 +21,16 @@ public class Services {
 
 		String code = iban.substring(0, 3);
 		String accountId = iban.substring(3);
-
 		Bank bank = Bank.getBankByCode(code);
-		Account account = bank.getAccountByAccountId(accountId);
-		return account;
+		if (bank != null) {
+			Account account = bank.getAccountByAccountId(accountId);
+			if (account != null) {
+				return account;
+			} else {
+				throw new AccountException();
+			}
+		}
+		throw new AccountException();
 	}
 
 	public Bank getBankByIban(String iban) {
@@ -34,7 +40,7 @@ public class Services {
 		return bank;
 	}
 
-	public Boolean checkAccount(String iban) throws AccountException {
+	public Boolean checkAccountExists(String iban) throws AccountException {
 		return this.getAccountByIban(iban) != null;
 	}
 

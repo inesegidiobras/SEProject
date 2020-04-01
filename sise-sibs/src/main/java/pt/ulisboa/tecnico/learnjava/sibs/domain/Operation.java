@@ -1,5 +1,7 @@
 package pt.ulisboa.tecnico.learnjava.sibs.domain;
 
+import pt.ulisboa.tecnico.learnjava.bank.exceptions.AccountException;
+import pt.ulisboa.tecnico.learnjava.bank.services.Services;
 import pt.ulisboa.tecnico.learnjava.sibs.exceptions.OperationException;
 
 public abstract class Operation {
@@ -35,6 +37,11 @@ public abstract class Operation {
 
 	public int getValue() {
 		return this.value;
+	}
+
+	public void process(Services services) throws OperationException, AccountException {
+		// TODO Auto-generated method stub
+
 	}
 
 }

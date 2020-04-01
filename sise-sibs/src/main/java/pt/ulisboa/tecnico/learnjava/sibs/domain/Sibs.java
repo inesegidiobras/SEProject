@@ -4,6 +4,9 @@ import pt.ulisboa.tecnico.learnjava.bank.exceptions.AccountException;
 import pt.ulisboa.tecnico.learnjava.bank.services.Services;
 import pt.ulisboa.tecnico.learnjava.sibs.exceptions.OperationException;
 import pt.ulisboa.tecnico.learnjava.sibs.exceptions.SibsException;
+import statedesignpattern.Cancelled;
+import statedesignpattern.Processed;
+import statedesignpattern.Retry;
 
 public class Sibs {
 	final Operation[] operations;
@@ -16,27 +19,38 @@ public class Sibs {
 
 	public void transfer(String sourceIban, String targetIban, int amount)
 			throws SibsException, AccountException, OperationException {
-		if (this.services.checkAccount(sourceIban) && this.services.checkAccount(targetIban)) {
-			if (this.services.checkSameBank(sourceIban, targetIban)) {
-				try {
-					this.services.deposit(targetIban, amount);
-				} catch (AccountException e) {
-				}
-				;
-				this.services.withdraw(sourceIban, amount);
-			} else {
-				int pos = addOperation(Operation.OPERATION_TRANSFER, sourceIban, targetIban, amount);
-				Operation operation = this.operations[pos];
-				try {
-					this.services.deposit(targetIban, amount);
-				} catch (AccountException e) {
-				}
-				;
-				this.services.withdraw(sourceIban, amount + operation.commission());
-			}
+		if (this.services.checkAccountExists(sourceIban) && this.services.checkAccountExists(targetIban)) {
+			addOperation(Operation.OPERATION_TRANSFER, sourceIban, targetIban, amount);
 		} else {
 			throw new AccountException();
 		}
+	}
+
+	public void processOperations() throws OperationException, AccountException, SibsException {
+		for (int i = 0; i < this.operations.length; i++) {
+			Operation operation = this.operations[i];
+			if (operation != null && operation.getType().equals(Operation.OPERATION_TRANSFER)) {
+				TransferOperation transfer = (TransferOperation) this.operations[i];
+				while (!(transfer.getStateContext().getCurrentState() instanceof Processed)
+						&& (!(transfer.getStateContext().getCurrentState() instanceof Error))
+						&& (!(transfer.getStateContext().getCurrentState() instanceof Cancelled))) {
+					try {
+						transfer.process(this.services);
+					} catch (OperationException e) {
+						if (transfer.getStateContext().getCurrentState() instanceof Retry) {
+							transfer.process(this.services);
+						} else {
+							transfer.getStateContext().setState(new Retry(transfer.getState()));
+						}
+					}
+				}
+			}
+		}
+	}
+
+	public void cancelOperation(int id) throws OperationException, AccountException, SibsException {
+		TransferOperation operation = (TransferOperation) this.operations[id];
+		operation.cancel();
 	}
 
 	public int addOperation(String type, String sourceIban, String targetIban, int value)

@@ -19,6 +19,7 @@ import pt.ulisboa.tecnico.learnjava.bank.exceptions.BankException;
 import pt.ulisboa.tecnico.learnjava.bank.exceptions.ClientException;
 import pt.ulisboa.tecnico.learnjava.bank.services.Services;
 import pt.ulisboa.tecnico.learnjava.sibs.domain.Sibs;
+import pt.ulisboa.tecnico.learnjava.sibs.domain.TransferOperation;
 import pt.ulisboa.tecnico.learnjava.sibs.exceptions.OperationException;
 import pt.ulisboa.tecnico.learnjava.sibs.exceptions.SibsException;
 
@@ -44,13 +45,13 @@ public class TransferMethodTest {
 	}
 
 	@Test
-	public void SourceAccountDoesntExistTest()
+	public void sourceAccountDoesntExistTest()
 			throws BankException, AccountException, SibsException, OperationException, ClientException {
 		Services services = mock(Services.class);
 		this.sibs = new Sibs(100, services);
 
-		when(services.checkAccount("sourceIban")).thenReturn(false);
-		when(services.checkAccount("targetIban")).thenReturn(true);
+		when(services.checkAccountExists("sourceIban")).thenReturn(false);
+		when(services.checkAccountExists("targetIban")).thenReturn(true);
 
 		try {
 			this.sibs.transfer("sourceIban", "targetIban", 100);
@@ -64,17 +65,16 @@ public class TransferMethodTest {
 		doThrow(AccountException.class).when(services).deposit("targetIban", 100);
 
 		assertNotNull(this.targetBank.createAccount(Bank.AccountType.CHECKING, this.targetClient, 1000, 0));
-
 	}
 
 	@Test
-	public void TargetAccountDoesntExistTest()
+	public void targetAccountDoesntExistTest()
 			throws BankException, AccountException, SibsException, OperationException, ClientException {
 		Services services = mock(Services.class);
 		this.sibs = new Sibs(100, services);
 
-		when(services.checkAccount("sourceIban")).thenReturn(true);
-		when(services.checkAccount("targetIban")).thenReturn(false);
+		when(services.checkAccountExists("sourceIban")).thenReturn(true);
+		when(services.checkAccountExists("targetIban")).thenReturn(false);
 
 		try {
 			this.sibs.transfer("sourceIban", "targetIban", 100);
@@ -88,17 +88,16 @@ public class TransferMethodTest {
 		doThrow(AccountException.class).when(services).deposit("targetIban", 100);
 
 		assertNotNull(this.sourceBank.createAccount(Bank.AccountType.CHECKING, this.sourceClient, 1000, 0));
-
 	}
 
 	@Test
-	public void AccountsDoesntExistTest()
+	public void accountsDontExistTest()
 			throws BankException, AccountException, SibsException, OperationException, ClientException {
 		Services services = mock(Services.class);
 		this.sibs = new Sibs(100, services);
 
-		when(services.checkAccount("sourceIban")).thenReturn(false);
-		when(services.checkAccount("targetIban")).thenReturn(false);
+		when(services.checkAccountExists("sourceIban")).thenReturn(false);
+		when(services.checkAccountExists("targetIban")).thenReturn(false);
 
 		try {
 			this.sibs.transfer("sourceIban", "targetIban", 100);
@@ -110,43 +109,52 @@ public class TransferMethodTest {
 		;
 
 		doThrow(AccountException.class).when(services).deposit("targetIban", 100);
-
 	}
 
+	// This test suffered a transformation after the implementation of Part2
+	// After Part2 the transfer is done depending on its state
 	@Test
-	public void AccountsExistBankExistTest()
+	public void accountsExistInTheSameBankTest()
 			throws BankException, AccountException, SibsException, OperationException, ClientException {
 		Services services = mock(Services.class);
 		this.sibs = new Sibs(100, services);
 
-		when(services.checkAccount("sourceIban")).thenReturn(true);
-		when(services.checkAccount("targetIban")).thenReturn(true);
+		when(services.checkAccountExists("sourceIban")).thenReturn(true);
+		when(services.checkAccountExists("targetIban")).thenReturn(true);
 		when(services.checkSameBank("sourceIban", "targetIban")).thenReturn(true);
 
+		TransferOperation transferOperation = new TransferOperation("sourceIban", "targetIban", 100);
+		transferOperation.process(services);
+		transferOperation.process(services);
+
 		this.sibs.transfer("sourceIban", "targetIban", 100);
+
 		verify(services, times(1)).deposit("targetIban", 100);
 		verify(services, times(1)).withdraw("sourceIban", 100);
-
 	}
 
+	// This test suffered a transformation after the implementation of Part2
 	@Test
-	public void AccountsExistBankDoesntExistTest()
+	public void accountsExistInDifferentBanksTest()
 			throws BankException, AccountException, SibsException, OperationException, ClientException {
 		Services services = mock(Services.class);
 		this.sibs = new Sibs(100, services);
 
-		when(services.checkAccount("sourceIban")).thenReturn(true);
-		when(services.checkAccount("targetIban")).thenReturn(true);
+		when(services.checkAccountExists("sourceIban")).thenReturn(true);
+		when(services.checkAccountExists("targetIban")).thenReturn(true);
 		when(services.checkSameBank("sourceIban", "targetIban")).thenReturn(false);
 
-		this.sibs.transfer("sourceIban", "targetIban", 100);
-		verify(services).deposit("targetIban", 100);
-		verify(services).withdraw("sourceIban", 106);
+		TransferOperation transferOperation = new TransferOperation("sourceIban", "targetIban", 100);
+		transferOperation.process(services);
+		transferOperation.process(services);
 
+		verify(services, times(1)).deposit("targetIban", 100);
+		verify(services, times(1)).withdraw("sourceIban", 100);
+		verify(services, times(1)).withdraw("sourceIban", 6);
 	}
 
 	@Test
-	public void DepositFails()
+	public void depositFails()
 			throws BankException, AccountException, SibsException, OperationException, ClientException {
 		Services services = mock(Services.class);
 		this.sibs = new Sibs(100, services);
