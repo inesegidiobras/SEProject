@@ -9,6 +9,7 @@ import org.junit.Test;
 
 import pt.ulisboa.tecnico.learnjava.bank.domain.Bank;
 import pt.ulisboa.tecnico.learnjava.bank.domain.Client;
+import pt.ulisboa.tecnico.learnjava.bank.domain.Person;
 import pt.ulisboa.tecnico.learnjava.bank.exceptions.AccountException;
 import pt.ulisboa.tecnico.learnjava.bank.exceptions.BankException;
 import pt.ulisboa.tecnico.learnjava.bank.exceptions.ClientException;
@@ -35,6 +36,8 @@ public class TransferOperationMethodTest {
 	private Sibs sibs;
 	private Bank sourceBank;
 	private Bank targetBank;
+	private Person sourcePerson;
+	private Person targetPerson;
 	private Client sourceClient;
 	private Client targetClient;
 	private String sourceIban;
@@ -46,8 +49,10 @@ public class TransferOperationMethodTest {
 	public void setUp() throws BankException, AccountException, ClientException {
 		this.sourceBank = new Bank("CGD");
 		this.targetBank = new Bank("BPI");
-		this.sourceClient = new Client(this.sourceBank, FIRST_NAME, LAST_NAME, NIF, PHONE_NUMBER, ADDRESS, 33);
-		this.targetClient = new Client(this.targetBank, FIRST_NAME, LAST_NAME, NIF, PHONE_NUMBER, ADDRESS, 22);
+		this.sourcePerson = new Person(FIRST_NAME, LAST_NAME, ADDRESS, 33);
+		this.targetPerson = new Person(FIRST_NAME, LAST_NAME, ADDRESS, 22);
+		this.sourceClient = new Client(this.sourcePerson, this.sourceBank, NIF, PHONE_NUMBER);
+		this.targetClient = new Client(this.targetPerson, this.targetBank, NIF, PHONE_NUMBER);
 		this.sourceIban = this.sourceBank.createAccount(Bank.AccountType.CHECKING, this.sourceClient, 1000, 0);
 		this.targetIban = this.targetBank.createAccount(Bank.AccountType.CHECKING, this.targetClient, 1000, 0);
 		this.sourceIbanError = this.sourceBank.createAccount(Bank.AccountType.CHECKING, this.sourceClient, 0, 0);

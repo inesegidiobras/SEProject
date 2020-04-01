@@ -8,6 +8,7 @@ import org.junit.Test;
 
 import pt.ulisboa.tecnico.learnjava.bank.domain.Bank;
 import pt.ulisboa.tecnico.learnjava.bank.domain.Client;
+import pt.ulisboa.tecnico.learnjava.bank.domain.Person;
 import pt.ulisboa.tecnico.learnjava.bank.exceptions.AccountException;
 import pt.ulisboa.tecnico.learnjava.bank.exceptions.BankException;
 import pt.ulisboa.tecnico.learnjava.bank.exceptions.ClientException;
@@ -20,12 +21,14 @@ public class DeleteClientMethodTest {
 	private static final String FIRST_NAME = "António";
 
 	private Bank bank;
+	private Person person;
 	private Client client;
 
 	@Before
 	public void setUp() throws BankException, ClientException {
 		this.bank = new Bank("CGD");
-		this.client = new Client(this.bank, FIRST_NAME, LAST_NAME, NIF, PHONE_NUMBER, ADDRESS, 33);
+		this.person = new Person(FIRST_NAME, LAST_NAME, ADDRESS, 33);
+		this.client = new Client(this.person, this.bank, NIF, PHONE_NUMBER);
 	}
 
 	@Test

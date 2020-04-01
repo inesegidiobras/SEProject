@@ -12,6 +12,7 @@ import org.junit.Test;
 import pt.ulisboa.tecnico.learnjava.bank.domain.Bank;
 import pt.ulisboa.tecnico.learnjava.bank.domain.CheckingAccount;
 import pt.ulisboa.tecnico.learnjava.bank.domain.Client;
+import pt.ulisboa.tecnico.learnjava.bank.domain.Person;
 import pt.ulisboa.tecnico.learnjava.bank.domain.SalaryAccount;
 import pt.ulisboa.tecnico.learnjava.bank.domain.SavingsAccount;
 import pt.ulisboa.tecnico.learnjava.bank.domain.YoungAccount;
@@ -24,6 +25,8 @@ public class ExamTests {
 	private Bank bank;
 	private Client client;
 	private Client youngClient;
+	private Person person;
+	private Person youngPerson;
 	private CheckingAccount checking;
 	private CheckingAccount otherChecking;
 	private SavingsAccount savings;
@@ -35,10 +38,12 @@ public class ExamTests {
 	public void setUp() throws AccountException, ClientException, BankException {
 		this.services = new Services();
 		this.bank = new Bank("CGD");
-
-		this.client = new Client(this.bank, "José", "Manuel", "123456789", "987654321", "Street", 33);
-		Client otherClient = new Client(this.bank, "José", "Manuel", "023456789", "987654321", "Street", 33);
-		this.youngClient = new Client(this.bank, "José", "Manuel", "123456780", "987654321", "Street", 17);
+		this.person = new Person("José", "Manuel", "Street", 33);
+		this.client = new Client(this.person, this.bank, "123456789", "987654321");
+		Person otherPerson = new Person("José", "Manuel", "Street", 33);
+		Client otherClient = new Client(otherPerson, this.bank, "023456789", "987654321");
+		this.youngPerson = new Person("José", "Manuel", "Street", 17);
+		this.youngClient = new Client(this.youngPerson, this.bank, "123456780", "987654321");
 
 		this.checking = (CheckingAccount) this.services
 				.getAccountByIban(this.bank.createAccount(Bank.AccountType.CHECKING, this.client, 0, 0));

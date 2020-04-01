@@ -155,8 +155,10 @@ public class Bank {
 		Services services = new Services();
 		Bank cgd = new Bank("CGD");
 
-		Client clientOne = new Client(cgd, "José", "Manuel", "123456789", "987654321", "Street", 34);
-		Client clientTwo = new Client(cgd, "José", "Manuel", "123456789", "987654321", "Street", 34);
+		Person PersonOne = new Person("José", "Manuel", "Street", 34);
+		Person PersonTwo = new Person("José", "Manuel", "Street", 34);
+		Client clientOne = new Client(PersonOne, cgd, "123456789", "987654321");
+		Client clientTwo = new Client(PersonTwo, cgd, "123456789", "987654321");
 
 		cgd.createAccount(AccountType.CHECKING, clientOne, 100, 0);
 		String iban = cgd.createAccount(AccountType.CHECKING, clientTwo, 1000, 0);

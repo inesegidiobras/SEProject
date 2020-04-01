@@ -8,6 +8,7 @@ import javax.swing.JOptionPane;
 import pt.ulisboa.tecnico.learnjava.bank.domain.Bank;
 import pt.ulisboa.tecnico.learnjava.bank.domain.Bank.AccountType;
 import pt.ulisboa.tecnico.learnjava.bank.domain.Client;
+import pt.ulisboa.tecnico.learnjava.bank.domain.Person;
 import pt.ulisboa.tecnico.learnjava.bank.exceptions.AccountException;
 import pt.ulisboa.tecnico.learnjava.bank.exceptions.BankException;
 import pt.ulisboa.tecnico.learnjava.bank.exceptions.ClientException;
@@ -34,8 +35,10 @@ public class MbwayMVCPattern {
 
 		MbwayController controller = new MbwayController(model, view);
 
-		Client clientOne = new Client(cgd, "Ana", "Íris", "333333333", "918318903", "Street", 29);
-		Client clientTwo = new Client(cgd, "Inês", "Brás", "444444444", "966209505", "Street", 24);
+		Person personOne = new Person("Ana", "Íris", "Street", 29);
+		Person personTwo = new Person("Inês", "Brás", "Street", 24);
+		Client clientOne = new Client(personOne, cgd, "333333333", "918318903");
+		Client clientTwo = new Client(personTwo, cgd, "444444444", "966209505");
 
 		cgd.createAccount(AccountType.CHECKING, clientOne, 500, 0);
 		cgd.createAccount(AccountType.CHECKING, clientTwo, 1000, 0);

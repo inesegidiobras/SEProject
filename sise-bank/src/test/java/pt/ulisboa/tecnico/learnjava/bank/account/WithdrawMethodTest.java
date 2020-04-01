@@ -10,6 +10,7 @@ import org.junit.Test;
 import pt.ulisboa.tecnico.learnjava.bank.domain.Bank;
 import pt.ulisboa.tecnico.learnjava.bank.domain.CheckingAccount;
 import pt.ulisboa.tecnico.learnjava.bank.domain.Client;
+import pt.ulisboa.tecnico.learnjava.bank.domain.Person;
 import pt.ulisboa.tecnico.learnjava.bank.domain.SalaryAccount;
 import pt.ulisboa.tecnico.learnjava.bank.domain.SavingsAccount;
 import pt.ulisboa.tecnico.learnjava.bank.domain.YoungAccount;
@@ -29,13 +30,15 @@ public class WithdrawMethodTest {
 	public void setUp() throws AccountException, BankException, ClientException {
 		Bank bank = new Bank("CGD");
 
-		Client client = new Client(bank, "José", "Manuel", "123456789", "987654321", "Street", 33);
-		Client youngClient = new Client(bank, "José", "Manuel", "123456780", "987654321", "Street", 17);
+		Person person = new Person("José", "Manuel", "Street", 33);
+		Person youngperson = new Person("José", "Manuel", "Street", 17);
+		Client client = new Client(person, bank, "123456789", "987654321");
+		Client youngclient = new Client(youngperson, bank, "123456780", "987654321");
 
 		this.checking = new CheckingAccount(client, 100);
 		this.savings = new SavingsAccount(client, 100, 10);
 		this.salary = new SalaryAccount(client, 100, 1000);
-		this.young = new YoungAccount(youngClient, 100);
+		this.young = new YoungAccount(youngclient, 100);
 	}
 
 	@Test
