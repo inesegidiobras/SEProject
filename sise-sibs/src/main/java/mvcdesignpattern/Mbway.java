@@ -162,7 +162,7 @@ public class Mbway {
 
 	}
 
-	public void refundMbwayClientsSplitted() throws AccountException {
+	public void refundMbwayClientsSplitted(int amount) throws AccountException {
 
 		for (int i = 1; i < this.MbwaySplitPhoneNumbers.size(); i++) {
 			this.services.deposit(this.MbwayClients.get(this.MbwaySplitPhoneNumbers.get(i)).getIban(),
@@ -180,7 +180,7 @@ public class Mbway {
 			clearArraysPhoneAndAmount();
 			return totalAmount;
 		} else {
-			refundMbwayClientsSplitted();
+			refundMbwayClientsSplitted(amount);
 			clearArraysPhoneAndAmount();
 			throw new AccountException();
 		}
