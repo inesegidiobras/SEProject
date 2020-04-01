@@ -40,8 +40,8 @@ public class MbwayMVCPattern {
 		cgd.createAccount(AccountType.CHECKING, clientOne, 500, 0);
 		cgd.createAccount(AccountType.CHECKING, clientTwo, 1000, 0);
 
-		System.out.println(cgd.createAccount(AccountType.CHECKING, clientOne, 500, 0));
-		System.out.println(cgd.createAccount(AccountType.CHECKING, clientTwo, 1000, 0));
+//		System.out.println(cgd.createAccount(AccountType.CHECKING, clientOne, 500, 0));
+//		System.out.println(cgd.createAccount(AccountType.CHECKING, clientTwo, 1000, 0));
 
 		while (true) {
 
